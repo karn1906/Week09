@@ -1,31 +1,63 @@
 import express from 'express';
+import cors from 'cors';
 
-const app = express()
-const port = 3000
+const app = express();
+const port = 3000;
 
-// GET, POST, PUT, DELETE
-app.get('/', (req, res) => {
-  res.send('Welcome to the Bookstore!');
+app.use(cors());
+
+const myOrder = [
+  {
+    "orderId": "ORD001",
+    "orderDate": "01/01/2025 11:00:00",
+    "orderTotal": 2000,
+    "orderStatus": 10,
+    "orderBy": "Dog"
+  },
+  {
+    "orderId": "ORD002",
+    "orderDate": "01/01/2025 12:00:00",
+    "orderTotal": 2100,
+    "orderStatus": 20,
+    "orderBy": "Cat"
+  },
+  {
+    "orderId": "ORD003", 
+    "orderDate": "01/01/2025 13:00:00", 
+    "orderTotal": 1500, 
+    "orderStatus": 10,
+    "orderBy": "Fox"
+  },
+];
+
+app.get('/orders/:ordid', (req, res) => { 
+  let orderId = req.params.ordid;
+  const result = myOrder.filter((objOrd, index) => { 
+    return objOrd.orderId == orderId
+  })
+    res.send(result[0]);
+})
+
+app.get('/orders', (req, res) => {
+  res.send(myOrder);
 });
 
-// URL: http://localhost:3000/bookstore/u100/ORD100/BookTitle/2/500
-app.get('/bookstore/:userName/:orderId/:bookTitle/:quantity/:price', (req, res) => {
-  let myData = "<h1>Bookstore Order Details</h1>";
-  myData += `<strong>User Name:</strong> ${req.params.userName}<br/>`;  //รหัสผู้ใช้
-  myData += `<strong>Order ID:</strong> ${req.params.orderId}<br/>`;  //รหัสออเดอร์
-  myData += `<strong>Book Title:</strong> ${req.params.bookTitle}<br/>`; //ชื่อหนังสือ
-  myData += `<strong>Quantity:</strong> ${req.params.quantity}<br/>`; //จำนวน
-  myData += `<strong>Price:</strong> ${req.params.price} THB<br/>`; //ราคาต่อ1
- // คำนวณราคาทั้งหมด
-const totalPrice = req.params.quantity * req.params.price;
-  myData += `<strong>Total Price:</strong> ${totalPrice} THB<br/>`;
+app.get('/', (req, res) => {
+  res.send('Hello World!');
+});
 
+app.get('/toDoLists/:userId/:orderId', (req, res) => {
+  let myData = "<h1>My Profile</h1>";
+  myData += "<strong>User ID: </strong>  " + req.params.userId + "<br/>";
+  myData += "<strong>Order ID: </strong> " + req.params.orderId + "<br/>";
   res.set('Content-type', 'text/html');
   res.send(myData);
 });
+
 app.post('/', (req, res) => {
   res.send('Hello World in POST method!');
 });
+
 app.listen(port, () => {
- console.log(`Example app listening on port ${port}`);
+  console.log(`Example app listening on port ${port}`);
 });
